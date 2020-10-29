@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build&push:
+  build-and-push:
     name: 构建并推送镜像
     runs-on: ubuntu-latest
     steps:
