@@ -1,0 +1,25 @@
+name: 持续交付
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build&push:
+    name: 构建并推送镜像
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 检出代码
+      uses: actions/checkout@v2
+
+    - name: 构建镜像
+      run: |
+        docker build -t "ccr.ccs.tencentyun.com/project-chaos/reverse-proxy:${GITHUB_SHA:0:7}" .
+        docker tag "ccr.ccs.tencentyun.com/project-chaos/reverse-proxy:${GITHUB_SHA:0:7}" "ccr.ccs.tencentyun.com/project-chaos/reverse-proxy:latest"
+
+    - name: 推送镜像
+      run: |
+        docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_PASSWORD}} ccr.ccs.tencentyun.com
+        docker push "ccr.ccs.tencentyun.com/project-chaos/reverse-proxy:${GITHUB_SHA:0:7}"
+        docker push "ccr.ccs.tencentyun.com/project-chaos/reverse-proxy:latest"

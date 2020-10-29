@@ -1,0 +1,16 @@
+# 这里监听的域名需要与实际请求的域名一致, 发布到环境中才可以正确的进行监听
+# 经过测试, 监听 localhost, 127.0.0.1, 0.0.0.0 都不能正确的监听到下方的路由
+# http://api.chaos.jilinoffcn.com:8080 {
+# 直接监听端口也可
+:8080 {
+    # 配合 uri strip_prefix 使用
+    route /reverse-proxy/offcn-sales/* {
+        # 删除前缀
+    	uri strip_prefix /reverse-proxy/offcn-sales
+    	# 反向代理
+        reverse_proxy http://apps.sales.offcn.com {
+            # 设置到上游的 Header
+            header_up Host {http.reverse_proxy.upstream.hostport}
+        }
+    }
+}
